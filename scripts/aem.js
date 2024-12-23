@@ -354,10 +354,7 @@ async function loadTheme(themeName) {
     return
   }
   try {
-    const cssLoaded = new Promise((resolve) => {
-      loadCSS(`${window.hlx.codeBasePath}/styles/themes/${themeName}.css`, resolve);
-    });
-    await Promise.all([cssLoaded]);
+    await loadCSS(`${window.hlx.codeBasePath}/styles/themes/${themeName}.css`);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.log(`failed to load theme ${themeName}`, error);
@@ -366,9 +363,7 @@ async function loadTheme(themeName) {
 
 async function loadTemplate(doc, templateName) {
   try {
-    const cssLoaded = new Promise((resolve) => {
-      loadCSS(`${window.hlx.codeBasePath}/templates/${templateName}/${templateName}.css`, resolve);
-    });
+    const cssLoaded = loadCSS(`${window.hlx.codeBasePath}/templates/${templateName}/${templateName}.css`);
     const decorationComplete = new Promise((resolve) => {
       (async () => {
         try {
