@@ -11,6 +11,8 @@ import {
   loadSection,
   loadSections,
   loadCSS,
+  getMetadata,
+  loadTheme,
 } from './aem.js';
 
 /**
@@ -73,11 +75,12 @@ export function decorateMain(main) {
  */
 async function loadEager(doc) {
   document.documentElement.lang = 'en';
-  await decorateTemplateAndTheme();
+  decorateTemplateAndTheme();
   const main = doc.querySelector('main');
   if (main) {
     decorateMain(main);
     document.body.classList.add('appear');
+    await loadTheme(getMetadata("theme"));
     await loadSection(main.querySelector('.section'), waitForFirstImage);
   }
 

@@ -332,7 +332,7 @@ function createOptimizedPicture(
 /**
  * Set template (page structure) and theme (page styles).
  */
-async function decorateTemplateAndTheme() {
+function decorateTemplateAndTheme() {
   const addClasses = (element, classes) => {
     classes.split(',').forEach((c) => {
       element.classList.add(toClassName(c.trim()));
@@ -341,10 +341,7 @@ async function decorateTemplateAndTheme() {
   const template = getMetadata('template');
   if (template) addClasses(document.body, template);
   const theme = getMetadata('theme');
-  if (theme) {
-    addClasses(document.body, theme);
-    await loadTheme(theme);
-  }
+  if (theme) addClasses(document.body, theme);
 }
 
 /**
@@ -353,6 +350,9 @@ async function decorateTemplateAndTheme() {
  * @returns {Promise<void>}
  */
 async function loadTheme(themeName) {
+  if (!themeName) {
+    return
+  }
   try {
     const cssLoaded = new Promise((resolve) => {
       loadCSS(`${window.hlx.codeBasePath}/styles/themes/${themeName}.css`, resolve);
@@ -765,6 +765,7 @@ export {
   getMetadata,
   loadBlock,
   loadCSS,
+  loadTheme,
   loadFooter,
   loadHeader,
   loadScript,
