@@ -332,7 +332,7 @@ function createOptimizedPicture(
 /**
  * Set template (page structure) and theme (page styles).
  */
-function decorateTemplateAndTheme() {
+async function decorateTemplateAndTheme() {
   const addClasses = (element, classes) => {
     classes.split(',').forEach((c) => {
       element.classList.add(toClassName(c.trim()));
@@ -341,7 +341,53 @@ function decorateTemplateAndTheme() {
   const template = getMetadata('template');
   if (template) addClasses(document.body, template);
   const theme = getMetadata('theme');
-  if (theme) addClasses(document.body, theme);
+  if (theme) {
+    addClasses(document.body, theme);
+    await loadTheme(theme);
+  }
+}
+
+/**
+ * Load a theme (CSS variables).
+ * @param themeName
+ * @returns {Promise<void>}
+ */
+async function loadTheme(themeName) {
+  try {
+    const cssLoaded = new Promise((resolve) => {
+      loadCSS(`${window.hlx.codeBasePath}/styles/themes/${themeName}.css`, resolve);
+    });
+    await Promise.all([cssLoaded]);
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.log(`failed to load theme ${themeName}`, error);
+  }
+}
+
+async function loadTemplate(doc, templateName) {
+  try {
+    const cssLoaded = new Promise((resolve) => {
+      loadCSS(`${window.hlx.codeBasePath}/templates/${templateName}/${templateName}.css`, resolve);
+    });
+    const decorationComplete = new Promise((resolve) => {
+      (async () => {
+        try {
+          const mod = await import(`../templates/${templateName}/${templateName}.js`);
+          if (mod.default) {
+            await mod.default(doc);
+          }
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.log(`failed to load module for ${templateName}`, error);
+        }
+        resolve();
+      })();
+    });
+    await Promise.all([cssLoaded, decorationComplete]);
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.log(`failed to load block ${templateName}`, error);
+  }
 }
 
 /**
