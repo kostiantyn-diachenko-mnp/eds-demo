@@ -11,6 +11,8 @@
  */
 
 /* eslint-env browser */
+import {hasCustomizedBlockCss, hasCustomizedBlockJs, isExistingTemplates, isExistingTheme} from "./configuration.js";
+
 function sampleRUM(checkpoint, data) {
   // eslint-disable-next-line max-len
   const timeShift = () => (window.performance ? window.performance.now() : Date.now() - window.hlx.rum.firstReadTime);
@@ -339,25 +341,33 @@ function decorateTemplateAndTheme() {
     });
   };
   const template = getMetadata('template');
-  if (template) addClasses(document.body, template);
+  if (template) {
+    addClasses(document.body, template);
+    addDataAttr(document.body, 'template', template);
+  }
   const theme = getMetadata('theme');
-  if (theme) addClasses(document.body, theme);
+  if (theme) {
+    addClasses(document.body, theme);
+    addDataAttr(document.body, 'theme', theme);
+  }
 }
 
 /**
  * Load a theme (CSS variables).
- * @param themeName
- * @returns {Promise<void>}
  */
-async function loadTheme(themeName) {
-  if (!themeName) {
-    return
+export function loadTheme() {
+  const themeLink = document.getElementById('theme');
+  const theme = document.body.dataset.theme;
+  if (theme && isExistingTheme(theme) && themeLink
+    && themeLink.getAttribute('href') !== `${window.hlx.codeBasePath}/styles/themes/${theme}.css`) {
+    themeLink.setAttribute('href', `${window.hlx.codeBasePath}/styles/themes/${theme}.css`);
   }
-  try {
-    await loadCSS(`${window.hlx.codeBasePath}/styles/themes/${themeName}.css`);
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.log(`failed to load theme ${themeName}`, error);
+}
+
+async function decorateTemplate(main) {
+  const template = document.body.dataset.template;
+  if (template && isExistingTemplates(template)) {
+    await loadTemplate(main, template);
   }
 }
 
@@ -383,6 +393,13 @@ async function loadTemplate(doc, templateName) {
     // eslint-disable-next-line no-console
     console.log(`failed to load block ${templateName}`, error);
   }
+}
+
+function addDataAttr(element, attrName, attrValue) {
+  if (!element) {
+    return
+  }
+  element.dataset[toCamelCase(attrName)] = attrValue;
 }
 
 /**
@@ -611,16 +628,19 @@ function buildBlock(blockName, content) {
  */
 async function loadBlock(block) {
   const status = block.dataset.blockStatus;
+  const theme = document.body.dataset.theme;
   if (status !== 'loading' && status !== 'loaded') {
     block.dataset.blockStatus = 'loading';
     const { blockName } = block.dataset;
     try {
-      const cssLoaded = loadCSS(`${window.hlx.codeBasePath}/blocks/${blockName}/${blockName}.css`);
+      const cssBlockName = hasCustomizedBlockCss(blockName, theme) ? `${blockName}-${theme}` : blockName;
+      const cssLoaded = loadCSS(`${window.hlx.codeBasePath}/blocks/${blockName}/${cssBlockName}.css`);
       const decorationComplete = new Promise((resolve) => {
         (async () => {
           try {
+            const jsBlockName = hasCustomizedBlockJs(blockName, theme) ? `${blockName}-${theme}` : blockName;
             const mod = await import(
-              `${window.hlx.codeBasePath}/blocks/${blockName}/${blockName}.js`
+              `${window.hlx.codeBasePath}/blocks/${blockName}/${jsBlockName}.js`
             );
             if (mod.default) {
               await mod.default(block);
@@ -756,11 +776,11 @@ export {
   decorateIcons,
   decorateSections,
   decorateTemplateAndTheme,
+  decorateTemplate,
   fetchPlaceholders,
   getMetadata,
   loadBlock,
   loadCSS,
-  loadTheme,
   loadFooter,
   loadHeader,
   loadScript,

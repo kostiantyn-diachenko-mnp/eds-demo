@@ -219,6 +219,8 @@ export default async function decorate(block) {
     }
   }
 
+  nav.insertBefore(navTools, navSections);
+
   // hamburger for mobile
   const hamburger = document.createElement('div');
   hamburger.classList.add('nav-hamburger');
