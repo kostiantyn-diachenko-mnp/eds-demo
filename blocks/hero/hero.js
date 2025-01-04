@@ -19,9 +19,9 @@ export default function decorate(block) {
   const title = block.querySelector(':scope h1');
   if (title) {
     const innerHTML = title.innerHTML.trim();
-    if (innerHTML.startsWith("<strong>") && innerHTML.includes("</strong>")) {
-      let newInnerHtml = innerHTML.substring(0, innerHTML.indexOf("</strong>") + 9);
-      newInnerHtml += "<span class='transparent-text'>" + innerHTML.substring(innerHTML.indexOf("</strong>") + 9) + "</span>";
+    if (innerHTML.startsWith('<strong>') && innerHTML.includes('</strong>')) {
+      let newInnerHtml = innerHTML.substring(0, innerHTML.indexOf('</strong>') + 9);
+      newInnerHtml += `<span class='transparent-text'>${innerHTML.substring(innerHTML.indexOf('</strong>') + 9)}</span>`;
       title.innerHTML = newInnerHtml;
     }
   }

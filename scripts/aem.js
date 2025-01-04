@@ -11,7 +11,9 @@
  */
 
 /* eslint-env browser */
-import {hasCustomizedBlockCss, hasCustomizedBlockJs, isExistingTemplates, isExistingTheme} from "./configuration.js";
+import {
+  hasCustomizedBlockCss, hasCustomizedBlockJs, isExistingTemplates, isExistingTheme,
+} from './configuration.js';
 
 function sampleRUM(checkpoint, data) {
   // eslint-disable-next-line max-len
@@ -331,44 +333,11 @@ function createOptimizedPicture(
   return picture;
 }
 
-/**
- * Set template (page structure) and theme (page styles).
- */
-function decorateTemplateAndTheme() {
-  const addClasses = (element, classes) => {
-    classes.split(',').forEach((c) => {
-      element.classList.add(toClassName(c.trim()));
-    });
-  };
-  const template = getMetadata('template');
-  if (template) {
-    addClasses(document.body, template);
-    addDataAttr(document.body, 'template', template);
+function addDataAttr(element, attrName, attrValue) {
+  if (!element) {
+    return;
   }
-  const theme = getMetadata('theme');
-  if (theme) {
-    addClasses(document.body, theme);
-    addDataAttr(document.body, 'theme', theme);
-  }
-}
-
-/**
- * Load a theme (CSS variables).
- */
-export function loadTheme() {
-  const themeLink = document.getElementById('theme');
-  const theme = document.body.dataset.theme;
-  if (theme && isExistingTheme(theme) && themeLink
-    && themeLink.getAttribute('href') !== `${window.hlx.codeBasePath}/styles/themes/${theme}.css`) {
-    themeLink.setAttribute('href', `${window.hlx.codeBasePath}/styles/themes/${theme}.css`);
-  }
-}
-
-async function decorateTemplate(main) {
-  const template = document.body.dataset.template;
-  if (template && isExistingTemplates(template)) {
-    await loadTemplate(main, template);
-  }
+  element.dataset[toCamelCase(attrName)] = attrValue;
 }
 
 async function loadTemplate(doc, templateName) {
@@ -395,11 +364,44 @@ async function loadTemplate(doc, templateName) {
   }
 }
 
-function addDataAttr(element, attrName, attrValue) {
-  if (!element) {
-    return
+/**
+ * Set template (page structure) and theme (page styles).
+ */
+function decorateTemplateAndTheme() {
+  const addClasses = (element, classes) => {
+    classes.split(',').forEach((c) => {
+      element.classList.add(toClassName(c.trim()));
+    });
+  };
+  const template = getMetadata('template');
+  if (template) {
+    addClasses(document.body, template);
+    addDataAttr(document.body, 'template', template);
   }
-  element.dataset[toCamelCase(attrName)] = attrValue;
+  const theme = getMetadata('theme');
+  if (theme) {
+    addClasses(document.body, theme);
+    addDataAttr(document.body, 'theme', theme);
+  }
+}
+
+/**
+ * Load a theme (CSS variables).
+ */
+export function loadTheme() {
+  const themeLink = document.getElementById('theme');
+  const { theme } = document.body.dataset;
+  if (theme && isExistingTheme(theme) && themeLink
+    && themeLink.getAttribute('href') !== `${window.hlx.codeBasePath}/styles/themes/${theme}.css`) {
+    themeLink.setAttribute('href', `${window.hlx.codeBasePath}/styles/themes/${theme}.css`);
+  }
+}
+
+async function decorateTemplate(main) {
+  const { template } = document.body.dataset;
+  if (template && isExistingTemplates(template)) {
+    await loadTemplate(main, template);
+  }
 }
 
 /**
@@ -628,7 +630,7 @@ function buildBlock(blockName, content) {
  */
 async function loadBlock(block) {
   const status = block.dataset.blockStatus;
-  const theme = document.body.dataset.theme;
+  const { theme } = document.body.dataset;
   if (status !== 'loading' && status !== 'loaded') {
     block.dataset.blockStatus = 'loading';
     const { blockName } = block.dataset;
