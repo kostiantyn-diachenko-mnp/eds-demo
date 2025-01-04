@@ -31,3 +31,42 @@
     order: unset;
   }
 }
+
+.ordered-items.columns {
+    padding-top: 30px;
+    padding-bottom: 25px;
+
+    @media (width >= 900px) {
+        padding-top: 70px;
+        padding-bottom: 50px;
+
+        & > div {
+            align-items: start;
+            gap: 100px;
+        }
+    }
+
+    & > div {
+        margin-bottom: 25px;
+
+        @media (width >= 900px) {
+            margin-bottom: 50px;
+        }
+    }
+
+    & > div > div > p:first-child {
+        font-size: var(--body-font-size-xl)
+    }
+
+    & > div > div:nth-child(2) > p {
+        font-size: var(--body-font-size-xs)
+    }
+
+    & > div > div:nth-child(2) > p:first-child {
+        margin-top: 0;
+    }
+
+    & h3 {
+        margin-top: 0;
+    }
+}

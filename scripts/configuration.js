@@ -1,13 +1,13 @@
 const THEMES = [
   'eds-demo',
-  'brand-a-demo'
+  'brand-a-demo',
 ];
 
 const TEMPLATES = [];
 
 const CUSTOMIZED_BLOCKS = {
-  'header-brand-a-demo': {css: false, js: true},
-}
+  'header-brand-a-demo': { css: false, js: true },
+};
 
 function isExistingTheme(theme) {
   return THEMES.includes(theme);
@@ -31,5 +31,5 @@ export {
   isExistingTheme,
   isExistingTemplates,
   hasCustomizedBlockCss,
-  hasCustomizedBlockJs
+  hasCustomizedBlockJs,
 };

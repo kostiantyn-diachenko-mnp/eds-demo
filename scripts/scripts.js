@@ -16,36 +16,6 @@ import {
   decorateTemplate,
 } from './aem.js';
 
-/**
- * Builds hero block and prepends to main in a new section.
- * @param {Element} main The container element
- */
-function buildHeroBlock(main) {
-  const h1 = main.querySelector('h1');
-  const picture = main.querySelector('picture');
-  // eslint-disable-next-line no-bitwise
-  if (h1 && picture && (h1.compareDocumentPosition(picture) & Node.DOCUMENT_POSITION_PRECEDING)) {
-    const section = document.createElement('div');
-    section.append(buildBlock('hero', { elems: [picture, h1] }));
-    main.prepend(section);
-  }
-}
-
-function build2ColHero(main) {
-  const firstDiv = main.querySelector(':scope > div:first-of-type');
-  const picture = firstDiv.querySelector('picture');
-  const h1 = firstDiv.querySelector('h1');
-  if (!h1 || !picture || !(h1.compareDocumentPosition(picture) & Node.DOCUMENT_POSITION_PRECEDING)) {
-    return
-  }
-  const section = createTag('div');
-  const heroBlock = buildBlock('hero', [[{ elems: [...firstDiv.children] }, picture]]);
-  heroBlock.classList.add('hero-2-cols');
-  section.append(heroBlock);
-  firstDiv.remove();
-  main.prepend(section);
-}
-
 export function createTag(tag, attributes, html) {
   const el = document.createElement(tag);
   if (html) {
@@ -68,6 +38,39 @@ export function createTag(tag, attributes, html) {
 }
 
 /**
+ * Builds hero block and prepends to main in a new section.
+ * @param {Element} main The container element
+ */
+// eslint-disable-next-line no-unused-vars
+function buildHeroBlock(main) {
+  const h1 = main.querySelector('h1');
+  const picture = main.querySelector('picture');
+  // eslint-disable-next-line no-bitwise
+  if (h1 && picture && (h1.compareDocumentPosition(picture) & Node.DOCUMENT_POSITION_PRECEDING)) {
+    const section = document.createElement('div');
+    section.append(buildBlock('hero', { elems: [picture, h1] }));
+    main.prepend(section);
+  }
+}
+
+function build2ColHero(main) {
+  const firstDiv = main.querySelector(':scope > div:first-of-type');
+  const picture = firstDiv.querySelector('picture');
+  const h1 = firstDiv.querySelector('h1');
+  if (!h1 || !picture
+    // eslint-disable-next-line no-bitwise
+    || !(h1.compareDocumentPosition(picture) & Node.DOCUMENT_POSITION_PRECEDING)) {
+    return;
+  }
+  const section = createTag('div');
+  const heroBlock = buildBlock('hero', [[{ elems: [...firstDiv.children] }, picture]]);
+  heroBlock.classList.add('hero-2-cols');
+  section.append(heroBlock);
+  firstDiv.remove();
+  main.prepend(section);
+}
+
+/**
  * load fonts.css and set a session storage flag
  */
 async function loadFonts() {
@@ -79,6 +82,7 @@ async function loadFonts() {
   }
 }
 
+// eslint-disable-next-line no-unused-vars
 function autolinkModals(doc) {
   doc.addEventListener('click', async (e) => {
     const origin = e.target.closest('a');
@@ -96,9 +100,9 @@ function autolinkModals(doc) {
  */
 function buildAutoBlocks(main) {
   try {
-    const template = document.body.dataset['template'];
+    const { template } = document.body.dataset;
     if (!template) {
-      //buildHeroBlock(main);
+      // buildHeroBlock(main);
       build2ColHero(main);
     }
   } catch (error) {
@@ -130,7 +134,7 @@ async function loadEager(doc) {
   decorateTemplateAndTheme();
   loadTheme();
   if (getMetadata('breadcrumbs').toLowerCase() === 'true') {
-    document.body.dataset.breadcrumbs = "true";
+    document.body.dataset.breadcrumbs = 'true';
   }
   const main = doc.querySelector('main');
   await decorateTemplate(main);
