@@ -1,0 +1,12 @@
+{
+  "project": "AEM Helix Block Collection",
+  "plugins": [
+    {
+      "id": "library",
+      "title": "Library",
+      "environments": ["edit", "dev"],
+      "url": "https://sidekick-library--aem-block-collection--adobe.aem.page/tools/sidekick/library.html",
+      "includePaths": ["**.docx**"]
+    }
+  ]
+}

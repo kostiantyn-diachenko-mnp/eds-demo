@@ -11,12 +11,37 @@ import {
   loadSection,
   loadSections,
   loadCSS,
+  getMetadata,
+  loadTheme,
+  decorateTemplate,
 } from './aem.js';
+
+export function createTag(tag, attributes, html) {
+  const el = document.createElement(tag);
+  if (html) {
+    if (html instanceof HTMLElement
+      || html instanceof SVGElement
+      || html instanceof DocumentFragment) {
+      el.append(html);
+    } else if (Array.isArray(html)) {
+      el.append(...html);
+    } else {
+      el.insertAdjacentHTML('beforeend', html);
+    }
+  }
+  if (attributes) {
+    Object.entries(attributes).forEach(([key, val]) => {
+      el.setAttribute(key, val);
+    });
+  }
+  return el;
+}
 
 /**
  * Builds hero block and prepends to main in a new section.
  * @param {Element} main The container element
  */
+// eslint-disable-next-line no-unused-vars
 function buildHeroBlock(main) {
   const h1 = main.querySelector('h1');
   const picture = main.querySelector('picture');
@@ -26,6 +51,23 @@ function buildHeroBlock(main) {
     section.append(buildBlock('hero', { elems: [picture, h1] }));
     main.prepend(section);
   }
+}
+
+function build2ColHero(main) {
+  const firstDiv = main.querySelector(':scope > div:first-of-type');
+  const picture = firstDiv.querySelector('picture');
+  const h1 = firstDiv.querySelector('h1');
+  if (!h1 || !picture
+    // eslint-disable-next-line no-bitwise
+    || !(h1.compareDocumentPosition(picture) & Node.DOCUMENT_POSITION_PRECEDING)) {
+    return;
+  }
+  const section = createTag('div');
+  const heroBlock = buildBlock('hero', [[{ elems: [...firstDiv.children] }, picture]]);
+  heroBlock.classList.add('hero-2-cols');
+  section.append(heroBlock);
+  firstDiv.remove();
+  main.prepend(section);
 }
 
 /**
@@ -40,13 +82,29 @@ async function loadFonts() {
   }
 }
 
+// eslint-disable-next-line no-unused-vars
+function autolinkModals(doc) {
+  doc.addEventListener('click', async (e) => {
+    const origin = e.target.closest('a');
+    if (origin && origin.href && origin.href.includes('/modals/')) {
+      e.preventDefault();
+      const { openModal } = await import(`${window.hlx.codeBasePath}/blocks/modal/modal.js`);
+      openModal(origin.href);
+    }
+  });
+}
+
 /**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
  */
 function buildAutoBlocks(main) {
   try {
-    buildHeroBlock(main);
+    const { template } = document.body.dataset;
+    if (!template) {
+      // buildHeroBlock(main);
+      build2ColHero(main);
+    }
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Auto Blocking failed', error);
@@ -74,7 +132,12 @@ export function decorateMain(main) {
 async function loadEager(doc) {
   document.documentElement.lang = 'en';
   decorateTemplateAndTheme();
+  loadTheme();
+  if (getMetadata('breadcrumbs').toLowerCase() === 'true') {
+    document.body.dataset.breadcrumbs = 'true';
+  }
   const main = doc.querySelector('main');
+  await decorateTemplate(main);
   if (main) {
     decorateMain(main);
     document.body.classList.add('appear');

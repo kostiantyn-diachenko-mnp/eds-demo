@@ -1,37 +1,103 @@
-.hero-container .hero-wrapper {
-  max-width: unset;
-  padding: 0;
+.hero__wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+    position: relative;
 }
 
-.hero {
-  position: relative;
-  padding: 40px 24px;
-  min-height: 300px;
+.hero-content__wrapper {
+    flex: 2;
+    z-index: 2;
 }
 
-.hero h1 {
-  max-width: 1200px;
-  margin-left: auto;
-  margin-right: auto;
-  color: var(--background-color);
+.hero-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50%;
+    max-width: 500px;
 }
 
-.hero picture {
-  position: absolute;
-  z-index: -1;
-  inset: 0;
-  object-fit: cover;
-  box-sizing: border-box;
+.hero-content h1 {
+    position: relative;
 }
 
-.hero img {
-  object-fit: cover;
-  width: 100%;
-  height: 100%;
+.hero-content h1 strong {
+    font-weight: bold;
 }
 
-@media (width >= 900px) {
-  .hero {
-    padding: 40px 32px;
-  }
+.hero-content h1 .transparent-text {
+    color: transparent;
+    -webkit-text-stroke-width: 1px;
+    -webkit-text-stroke-color: black;
+}
+
+.hero-content p {
+    width: 50%;
+}
+
+.hero-image {
+    flex: 8;
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.hero-image picture,
+.hero-image img {
+    width: auto;
+    height: 100%;
+    position: relative;
+}
+
+.hero-image img {
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
+}
+
+.hero-image:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to right, rgba(255, 255, 255, 0.8), transparent);
+    z-index: 1;
+}
+
+/* Button styling */
+.hero-content .button-container {
+    margin-top: 0;
+}
+
+.hero-content a.button {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    margin: 0;
+    background-color: unset;
+    color: #499CA6;
+    text-overflow: unset;
+    white-space: normal;
+    padding-left: 8px;
+    text-align: left;
+    font-size: 0.8rem;
+}
+
+.hero-content .button::before {
+    background: url('/icons/arrow.svg') no-repeat 0 0;
+    background-size: 32px 12px;
+    display: inline-block;
+    height: 12px;
+    width: 32px;
+    margin-right: 8px;
+    content: "";
 }

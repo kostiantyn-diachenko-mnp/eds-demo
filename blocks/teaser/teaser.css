@@ -1,0 +1,107 @@
+.teaser.block {
+    display: flex;
+    align-items: center;
+    position: relative;
+    margin: 20px 0;
+    overflow: hidden;
+}
+
+.teaser__wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    width: 100%;
+}
+
+.teaser-image {
+    position: relative;
+    width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+
+.teaser-image img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    display: block;
+}
+
+.teaser-content {
+    width: 50%;
+    padding: 100px 30px 100px 80px;
+    background-color: #499CA61F;
+    position: relative;
+    z-index: 1;
+    height: calc(1.25 * 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 500px;
+}
+
+/* Overlap effect */
+.teaser-image {
+    margin-right: -30px;
+}
+
+.teaser-content p {
+    margin: 0 0 10px;
+}
+
+.teaser-content p:first-child {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.teaser-content .button-container {
+    margin-top: 20px;
+}
+
+.teaser-content .button {
+    display: inline-flex;
+    align-items: center;
+    color: #000;
+    text-decoration: none;
+    font-size: 1em;
+    font-weight: bold;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+.teaser-content .button::before {
+    background: url('/icons/arrow.svg') no-repeat 0 0;
+    background-size: 32px 13px;
+    display: inline-block;
+    height: 13px;
+    width: 32px;
+    margin-right: 8px;
+    content: "";
+}
+
+.teaser-content a.button {
+    background-color: unset;
+    color: #499CA6;
+    text-overflow: unset;
+    white-space: normal;
+    padding-left: 8px;
+    text-align: left;
+}
+
+.teaser__wrapper.teaser__wrapper--right-image {
+
+    .teaser-content {
+        padding: 100px 80px 100px 30px;
+    }
+
+    /* Overlap effect */
+    .teaser-image {
+        margin-left: -30px;
+        margin-right: 0;
+    }
+}
